@@ -409,7 +409,7 @@ let halfwit = (code, inputs, flags = '') => {
     return output;
 }
 
-if (module?.exports) {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = halfwit;
 } else {
     window.halfwit = halfwit
