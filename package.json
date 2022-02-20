@@ -1,0 +1,11 @@
+{
+  "name": "halfwit",
+  "version": "1.0.0",
+  "description": "Halfwit is an experimental golfing language that fits most commands in half a byte.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
