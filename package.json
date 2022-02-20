@@ -1,6 +1,6 @@
 {
   "name": "halfwit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Halfwit is an experimental golfing language that fits most commands in half a byte.",
   "main": "main.js",
   "scripts": {
