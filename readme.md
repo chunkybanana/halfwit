@@ -9,6 +9,8 @@ npm install halfwit
 node main.js <filename> [single string of flags] [inputs]
 ```
 
+Or clone this repo.
+
 Or in node.js:
 
 ```js
@@ -20,6 +22,8 @@ Or in a website:
 ```html
 <script src='/path/to/halfwit.js'></script>
 ```
+
+Or, you can [try it online](https://dso.surge.sh/#halfwit) at [DSO](https://dso.surge.sh).
 
 ## Flags
 
