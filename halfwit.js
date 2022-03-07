@@ -107,6 +107,7 @@ let halfwit = (code, inputs, flags = '') => {
                 elems.push(['else']);
             } else {
                 elems.push(['if_not'])
+                struct_stack.push('if_not')
             }
         } else if (token == '(') {
             struct_stack.push('for');
