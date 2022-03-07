@@ -379,7 +379,7 @@ let halfwit = (code, inputs, flags = '') => {
         } else if (token[0] == 'end_filter') {
             compiled += `var res=pop(stack);input_stack.pop();return bool(res)}));`
         } else if (token[0] == 'reduce') {
-            compiled += `;stack.push(onerange(pop(stack)).reduce((current,next)=>{input_stack.push([current, next]);let stack=[];`
+            compiled += `;stack.push(onerange(pop(stack)).reduce((current,next)=>{input_stack.push([next, current]);let stack=[];`
         } else if (token[0] == 'end_reduce') {
             compiled += `var res=pop(stack);input_stack.pop();return res}));`
         } else if (token[0] == 'end_for') {
