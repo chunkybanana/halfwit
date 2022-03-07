@@ -2,7 +2,7 @@
 let halfwit = (code, inputs, flags = '') => {
     let string_so_far = '', in_int = false, tokens = [];
 
-    if(flags.includes('h')) {
+    if (flags.includes('h')) {
         return `- e - execute the filename as code
 - A - print as chars
 - c - print compiled code
@@ -13,17 +13,17 @@ let halfwit = (code, inputs, flags = '') => {
 - h - print flag help menu`
     }
 
-    if(flags.includes('C')) {
+    if (flags.includes('C')) {
         let count = 0;
         for(let byte of code) {
-            if('[M{;+*><JNfb:$?k'.includes(byte)) count += .5;
-            else if('e/|(%EnSilFR_}r'.includes(byte)) count += 1;
-            else if('0123456789sZDW,.'.includes(byte)) count += 1.5;
+            if ('[M{;+*><JNfb:$?k'.includes(byte)) count += .5;
+            else if ('e/|(%EnSilFR_}r'.includes(byte)) count += 1;
+            else if ('0123456789sZDW,.'.includes(byte)) count += 1.5;
         }
         return `Code is ${count} byte${count == 1 ? '' : 's'} long.`
     }
 
-    if(flags.includes('s')) {
+    if (flags.includes('s')) {
         function int_compress(num) {
             num = BigInt(num);
             let str = '';
@@ -79,7 +79,7 @@ let halfwit = (code, inputs, flags = '') => {
             }
         }
     }
-    if(string_so_far) tokens.push(string_so_far);    
+    if (string_so_far) tokens.push(string_so_far);    
     tokens = tokens.map(value => (aliases[value] ?? value))
     .flatMap(value => value == 'E' ? ['(','n'] : value)
 
@@ -132,7 +132,7 @@ let halfwit = (code, inputs, flags = '') => {
                     str = '';
                 } else str += token[i];
             }
-            if(str) strs.push(str)
+            if (str) strs.push(str)
             let nums = strs.map(val => {
                 for (let key in aliases) {
                     val = val.replaceAll(aliases[key], key)
@@ -159,7 +159,7 @@ let halfwit = (code, inputs, flags = '') => {
     let tail = value => value[value.length - 1]
 
     let cycle_pop = value => {
-        let head = value[0]
+        let head = value[0] ?? 0n;
         value.push(value.shift())
         return head;
     }
@@ -248,7 +248,7 @@ let halfwit = (code, inputs, flags = '') => {
     let repr = (value) => JSON.stringify(value, 
         (_, v) => typeof v == 'bigint' ? 
             v.toString() + 'n': v
-    ).replace(/"(\d+n)"/g, '$1')
+    )?.replace(/"(\d+n)"/g, '$1')
     let toStr = value => {
         if (!a(value)) {
             return String.fromCharCode(Number(value))
@@ -259,7 +259,7 @@ let halfwit = (code, inputs, flags = '') => {
         }
     }
     let onerange = value => a(value) ? value : [...Array(Number(value))].map((_,x) => BigInt(x + 1))
-    let bool = value => a(value) ? value.length : value != 0n ? 1n : 0n
+    let bool = value => (a(value) ? value.length : value != 0n) ? 1n : 0n
     let elements = {
         '+': [ vectorise((a, b) => a + b), 2, 1],
         '*': [ vectorise((left, right) => left * right), 2, 1],
@@ -344,7 +344,7 @@ let halfwit = (code, inputs, flags = '') => {
         ',': [ value => (printed = true) && (output += repr(value) + '\n'), 1, 0],
         '.': [ value => { printed = true; output += toStr(value)}, 1, 0],
         'x': [ () => console.debug(repr(stack)), 1, 0],
-
+        'p': [ () => console.debug(repr(pop(stack))), 1, 0],
     };
     let compiled = '';
     let hash = () => 'x' + Math.random().toString(16).slice(2);
@@ -360,14 +360,14 @@ let halfwit = (code, inputs, flags = '') => {
         } else if (token[0] == 'const') {
             compiled += `stack.push(${repr(token[1])});`
         } else if (token[0] == 'if') {
-            compiled += `if(pop(stack, inputs)){`
+            compiled += `if(bool(pop(stack))){`
         } else if (token[0] == 'else') {
             compiled += `}else{`
         } else if (token[0] == 'if_not') {
-            compiled += `if(!pop(stack)){`
+            compiled += `if(!bool(pop(stack))){`
         } else if (token[0] == 'for') {
             let variable = hash(), var2 = hash();
-            compiled += `let ${variable}=pop(stack);if(!a(${variable}))${variable}=range(${variable});for(let ${var2} of ${variable}){let ctx=${var2};`
+            compiled += `let ${variable}=pop(stack);if(!bool(a(${variable})))${variable}=range(${variable});for(let ${var2} of ${variable}){let ctx=${var2};`
         } else if (token[0] == 'ctx') {
             compiled += `stack.push(ctx??1n);`
         } else if (token[0] == 'map') {
@@ -388,6 +388,12 @@ let halfwit = (code, inputs, flags = '') => {
             compiled += `}`
         } else if (token[0] == 'end_if_not') {
             compiled += `}`
+        } else if (token[0] == 'while') {
+            compiled += 'while(1){'
+        } else if (token[0] == 'cond') {
+            compiled += `if(!bool(pop(stack)))break;`
+        } else if (token[0] == 'end_while') {
+            compiled += `}`
         }
     }
     if (flags.includes('p')) console.log(repr(elems))
@@ -403,8 +409,8 @@ let halfwit = (code, inputs, flags = '') => {
         : value) (inputs)
 
     eval(compiled);
-    if(!printed){
-        if(flags.includes('A')) output += toStr(stack.pop())
+    if (!printed){
+        if (flags.includes('A')) output += toStr(stack.pop())
         else output += repr(stack.pop() ?? 0n)
     }
     return output;
