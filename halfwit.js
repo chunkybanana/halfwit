@@ -316,7 +316,7 @@ let halfwit = (code, inputs, flags = '') => {
         }, 2, 1],
         'l': [ (left, right) => compare(left, right) == -1 ? 1n : 0n , 2, 1],
         '_': [ () => [], 1, 0],
-        'r': [ vectorise(val => Array(val).map((_, i) => i + 1)), 1, 1],
+        'r': [ vectorise(val => Array(Number(val)).map((_, i) => i + 1)), 1, 1],
         '0': [ () => 100n, 0, 1],
         '1': [ () => 256n, 0, 1],
         '2': [ () => 26n, 0, 1],
@@ -329,7 +329,7 @@ let halfwit = (code, inputs, flags = '') => {
         '9': [ () => 1000n, 0, 1],
         's': [ val => a(val) ? val.sort(compare) : primeFactors(val), 1, 1],
         'Z': [ (left, right) => {
-            let repeat = (val, int) => Array(int).fill(val);
+            let repeat = (val, int) => Array(Number(int)).fill(val);
             if (a(left) && a(right)) {
                 if (left.length > right.length) [left, right] = [right, left];
                 return right.map((val, i) => [val, left[i] ?? 0n])
